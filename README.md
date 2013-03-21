@@ -11,11 +11,11 @@ Provides a mechanism for displaying an inline error message on the input.
 
 - [Usage](#usage)
 	- [Creating a betterText element](#creating-a-bettertext-element)
-	- [Using a placholder](#using-a-placholder)
+	- [Using a placeholder](#using-a-placeholder)
 	- [BetterText actions](#bettertext-actions)
 		- [Getting the value from a betterText object](#getting-the-value-from-a-bettertext-object)
 		- [Showing an error message](#showing-an-error-message)
-		- [Validating an input's value](#validating-an-input-s-value)
+		- [Validating an input's value](#validating-an-inputs-value)
 - [BetterText Settings](#bettertext-settings)
 - [Styling with CSS](#styling-with-css)
 	- [The betterText wrapper](#the-bettertext-wrapper)
@@ -118,7 +118,7 @@ The settings object that you pass to the betterText initialization function can 
 
 	An array of functions that automatically validate the input when the user moves focus away from the input element.
 
-	This value gets passed to the "validate" action, so check out [Validating an input's value](#validating-an-input-s-value) for more information.
+	This value gets passed to the "validate" action, so check out [Validating an input's value](#validating-an-inputs-value) for more information.
 
 - `inputClass` (default: `''`)
 
