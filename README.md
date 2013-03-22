@@ -79,7 +79,7 @@ The 'value' action sets the current value to the second parameter, or returns th
 	// To clear an error
 	$(selector).betterText('error', false);
 
-The 'error' action will cause an span element to be inserted into the betterText wrapper.  This lets you easily display inline error messages for a field that doesn't validate.  You can style these messages however you wish.
+The 'error' action will cause a span element to be inserted into the betterText wrapper.  This lets you easily display inline error messages for a field that doesn't validate.  You can style these messages however you wish.
 
 Check out the [CSS styling information](#styling-with-css) for information on styling error messages.
 
