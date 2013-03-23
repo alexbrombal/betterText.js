@@ -1,29 +1,30 @@
+
 /**
-jquery.betterText.js
+ jquery.betterText.js
 
-Copyright (c) 2012 Alex Brombal
+ Copyright (c) 2012 Alex Brombal
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software
-and associated documentation files (the "Software"), to deal in the Software without restriction,
-including without limitation the rights to use, copy, modify, merge, publish, distribute,
-sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+ Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+ and associated documentation files (the "Software"), to deal in the Software without restriction,
+ including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all copies or
-substantial portions of the Software.
+ The above copyright notice and this permission notice shall be included in all copies or
+ substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
-NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
---------------------
+ --------------------
 
-See the documentation at:
-https://github.com/alexbrombal/betterText.js
+ See the documentation at:
+ https://github.com/alexbrombal/betterText.js
 
-*/
+ */
 
 ; (function () {
 
@@ -58,7 +59,7 @@ https://github.com/alexbrombal/betterText.js
 
             case 'create':
                 var focus = this.find(':focus');
-                this.filter('input[type=text], input[type=password]').each(function () {
+                this.filter('textarea, input[type=text], input[type=password]').each(function () {
                     if ($(this).betterText('object')) return;
                     new BetterText(this, options);
                 });
@@ -71,7 +72,7 @@ https://github.com/alexbrombal/betterText.js
                     var obj = $(this).betterText('object');
                     if (obj) result = obj.validate(options) || result;
                 });
-                return result;
+                return !result;
                 break;
 
             case 'error':
@@ -92,31 +93,33 @@ https://github.com/alexbrombal/betterText.js
     };
 
     /**
-    * Settings can contain:
-    *  wrapper: An element to use to wrap the input. Defaults to a <span> element.
-    *  placeholder: The placeholder to overlay. Defaults to the "title" attribute of the input or textarea.
-    */
+     * Settings can contain:
+     *  wrapper: An element to use to wrap the input. Defaults to a <span> element.
+     *  placeholder: The placeholder to overlay. Defaults to the "title" attribute of the input or textarea.
+     */
     var BetterText = function (input, settings) {
         var _this = this;
         this.input = $(input);
 
         // Extend settings from defaults
-        this.settings = $.extend($.fn.betterText.defaults, settings);
+        this.settings = $.extend($.extend({}, $.fn.betterText.defaults), settings);
 
         // Create the wrapper span
-        this.wrapper = $(this.settings.wrapper).addClass('betterText')
-                        .mousedown(function (e) {
-                            if($(e.target).closest('.error').length || e.target === _this.input[0]) return;
-                            setTimeout(function() { _this.input.focus(); });
-                        })
-                        .addClass(this.input.attr('class'));
+        this.wrapper = $(this.settings.wrapper)
+            .addClass('betterText')
+            .addClass(this.input[0].tagName.toLowerCase() === 'input' ? 'text' : 'textarea')
+            .mousedown(function (e) {
+                if($(e.target).closest('.error').length || e.target === _this.input[0]) return;
+                setTimeout(function() { _this.input.focus(); });
+            })
+            .addClass(this.input.attr('class'));
 
         // Replace the input with the wrapper
         this.wrapper.insertAfter(this.input);
         this.wrapper.append(this.input);
 
         // if inputClass is set, apply inputClass to the input tag
-        this.input.attr('class', settings.inputClass);
+        this.input.attr('class', this.settings.inputClass);
 
         // Insert the placeholder
         if (this.settings.placeholder === null)
