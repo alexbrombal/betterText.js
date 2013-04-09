@@ -72,7 +72,7 @@
                     var obj = $(this).betterText('object');
                     if (obj) result = obj.validate(options) || result;
                 });
-                return !result;
+                return result;
                 break;
 
             case 'error':
