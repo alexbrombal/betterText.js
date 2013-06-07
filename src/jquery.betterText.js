@@ -1,38 +1,36 @@
-
 /**
- jquery.betterText.js
+jquery.betterText.js
 
- Copyright (c) 2012 Alex Brombal
+Copyright (c) 2012 Alex Brombal
 
- Permission is hereby granted, free of charge, to any person obtaining a copy of this software
- and associated documentation files (the "Software"), to deal in the Software without restriction,
- including without limitation the rights to use, copy, modify, merge, publish, distribute,
- sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+and associated documentation files (the "Software"), to deal in the Software without restriction,
+including without limitation the rights to use, copy, modify, merge, publish, distribute,
+sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
- The above copyright notice and this permission notice shall be included in all copies or
- substantial portions of the Software.
+The above copyright notice and this permission notice shall be included in all copies or
+substantial portions of the Software.
 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
- NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
- DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
- --------------------
+--------------------
 
- See the documentation at:
- https://github.com/alexbrombal/betterText.js
+See the documentation at:
+https://github.com/alexbrombal/betterText.js
 
- */
+*/
 
 ; (function () {
 
-    if(typeof $ === 'undefined')
-    {
-        if(typeof jQuery !== 'undefined') $ = jQuery;
-        else if(typeof require !== 'undefined') $ = require('jquery');
-        if(typeof $ === 'undefined')
+    if (typeof $ === 'undefined') {
+        if (typeof jQuery !== 'undefined') $ = jQuery;
+        else if (typeof require !== 'undefined') $ = require('jquery');
+        if (typeof $ === 'undefined')
             throw "jQuery is required to use this tool.";
     }
 
@@ -67,12 +65,12 @@
                 break;
 
             case 'validate':
-                var result = '';
+                var success = true;
                 this.each(function () {
                     var obj = $(this).betterText('object');
-                    if (obj) result = obj.validate(options) || result;
+                    if (obj) success &= obj.validate(options);
                 });
-                return result;
+                return !!success;
                 break;
 
             case 'error':
@@ -93,10 +91,10 @@
     };
 
     /**
-     * Settings can contain:
-     *  wrapper: An element to use to wrap the input. Defaults to a <span> element.
-     *  placeholder: The placeholder to overlay. Defaults to the "title" attribute of the input or textarea.
-     */
+    * Settings can contain:
+    *  wrapper: An element to use to wrap the input. Defaults to a <span> element.
+    *  placeholder: The placeholder to overlay. Defaults to the "title" attribute of the input or textarea.
+    */
     var BetterText = function (input, settings) {
         var _this = this;
         this.input = $(input);
@@ -109,8 +107,8 @@
             .addClass('betterText')
             .addClass(this.input[0].tagName.toLowerCase() === 'input' ? 'text' : 'textarea')
             .mousedown(function (e) {
-                if($(e.target).closest('.error').length || e.target === _this.input[0]) return;
-                setTimeout(function() { _this.input.focus(); });
+                if ($(e.target).closest('.error').length || e.target === _this.input[0]) return;
+                setTimeout(function () { _this.input.focus(); });
             })
             .addClass(this.input.attr('class'));
 
@@ -143,7 +141,7 @@
                 _this.validate();
         });
 
-        $(window).blur(function() {
+        $(window).blur(function () {
             _this.input.trigger('change');
         });
 
@@ -163,20 +161,21 @@
         },
 
         /**
-         * Validates the input using an array of validation functions.
-         * Each function is run and if it returns an error string, validation
-         * stops immediately and the error message is shown.
-         * If there are no validation methods supplied, any error messages are cleared.
-         */
+        * Validates the input using an array of validation functions.
+        * Each function is run and if it returns an error string (or true), validation
+        * stops immediately and the error message is shown.
+        * If there are no validation methods supplied, any error messages are cleared.
+        * Returns true if the field validates, false otherwise.
+        */
         validate: function (validate) {
             var _this = this;
-            var message = true;
+            var message = false;
             validate = validate || this.settings.validate;
-            if(!validate) {
+            if (!validate) {
                 this.error(false);
                 return;
             }
-            var validateOne = function(validate) {
+            var validateOne = function (validate) {
                 var error = '';
                 if (validate && (error = validate(_this.input.val())))
                     return error;
@@ -187,21 +186,20 @@
                     if (message = validateOne(validate[i]))
                         break;
             }
-            else if(validate.constructor === Function)
+            else if (validate.constructor === Function)
                 message = validateOne(validate);
             this.error(message);
-            return message;
+            return !message;
         },
 
         /**
-         * Displays 'text' in a floating error message bubble above the input.
-         * If 'text' is true (not a string) only an 'error' class is added to the input.
-         */
+        * Displays 'text' in a floating error message bubble above the input.
+        * If 'text' is true (not a string) only an 'error' class is added to the input.
+        */
         error: function (text) {
             var el = this.wrapper.find('.error');
             if (text) {
-                if(typeof text === 'string')
-                {
+                if (typeof text === 'string') {
                     if (!el.length) el = $('<span class="error"><span class="arrow"></span><span class="text"></span><a href="" class="close" tabindex="-1"></a></span>').appendTo(this.wrapper);
                     el.find('.arrow').html(this.settings.errorGraphic);
                     el.find('.text').html(text);
@@ -222,8 +220,8 @@
     BetterText.fields = [];
 
     /**
-     * Fix the placeholders on all textfields.
-     */
+    * Fix the placeholders on all textfields.
+    */
     BetterText.updateAll = function () {
         $.each(BetterText.fields, function () {
             this.updatePlaceholder();
